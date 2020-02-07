@@ -33,7 +33,7 @@ function refresh() {
     xmlhttp.onreadystatechange = function () {
         if (xmlhttp.status == 200 && xmlhttp.readyState == 4) {
             var ret = xmlhttp.responseText;
-
+            
             if (ret.substr(0, 9) == "DataBack:") {
 
                 var data = ret.substr(ret.indexOf(":") + 1);
@@ -274,11 +274,11 @@ function Ledcrtl(arg) {
 
 
 function JUMP(arg) {
-    
+
     document.getElementById("one").innerHTML = "";
     document.getElementById('one').setAttribute('class', 'MyType');
     switch (arg) {
-        
+
         case 0:
 
             var a = '<input type="button" class="active" value="注销" onclick="cancellation()" />\
@@ -466,8 +466,7 @@ function my_fun() {
         'green' : (div.style.color == 'green' ? 'blue' : 'red');
 }
 /**************结束**************************************** */
-function HistoricalRecord()
-{alert("wo dima l ");
+function HistoricalRecord() {
     var xmlhttp = getXMLHttpRequest()
     var url = "/cgi-bin/MyCgi2.cgi";
     var data = "GETHistoricalRecord";
@@ -478,10 +477,76 @@ function HistoricalRecord()
             var ret = xmlhttp.responseText;
             alert(ret);
             
+          
+            
+           var Html = "<table >";
+            Html += " <tr>";
+            var tmp = ret;
+            var arr = new Array();
+            var arr1 = new Array();
+           
+            tmp = tmp.substr(0,tmp.indexOf("*")+1);
+            
+            var i =0;
+            while(tmp.indexOf("-") != -1)
+            {
+                arr[i] = tmp.substr(0,tmp.indexOf("-"));
+                tmp = tmp.substr(tmp.indexOf("-")+1);
+                i++;
+            }
+            arr[i] = tmp.substr(0,tmp.indexOf("*"));
+            tmp = ret;
+            i =0;
+            tmp = tmp.substr(tmp.indexOf("*")+1);
+            while(tmp.indexOf("*") != -1)
+            {
+                arr1[i] = tmp.substr(0,tmp.indexOf("*"));
+                tmp = tmp.substr(tmp.indexOf("*")+1);
+                i++;
+            }
+            arr1[i] = tmp;
+            arr.shift();
+            arr1.shift();
+            alert(arr.length);
+            alert(arr1.length);
+            for (var i = 0; i < arr.length; i++) {
+
+                alert(arr[i]);
+    
+                } 
+            for (var i = 0; i < arr1.length; i++) {
+    
+                alert(arr1[i]);
+        
+                } 
+
+
+
+
+
+
+            for (var i = 0; i < arr.length; i++) {
+
+            Html += "<td>"+arr[i]+"</td>";
+
+            } 
+            Html += "</tr>";
+            for(var i = 0;i< arr1.length/arr.length;i++)
+            {
+                Html += "<tr>";
+                
+                Html +="<td>"+ arr1[i*arr.length+1]+"</td>";
+                Html +="<td>"+ arr1[i*arr.length]+"</td>";
+                Html += "</tr>";
+            }
+            document.getElementById("one").innerHTML = Html;
+
+
         }
+        
+
+
     }
     xmlhttp.open("POST", url, true);
-    xmlhttp.send(data);
-
-
+        xmlhttp.send(data);
 }

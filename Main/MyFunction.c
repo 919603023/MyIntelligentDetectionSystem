@@ -289,18 +289,25 @@ void GET_HistoricalRecord()
 		My_msg.type = SQLITE3TOCGI;
 		My_msg.My_type = BACKHistoricalRecord;
 		index = nColumn;
+		if(nRow > 0)
+		{
+			for(int i = 0 ; i < nColumn ;i++)
+			{
+			    sprintf(My_msg.data,"-%s",dbResult[i]);
+				msgsnd(msg_id, &My_msg, sizeof(My_msg) - sizeof(long), 0);
+			}
+			
+		}
 		for(i=0;i<nRow;i++)
 		{
-			
-			for(j=0;j<nColumn;j++)
-			{
+
 				printf("nColumn[%d]=%s:data[%d]=%s\n",j,dbResult[j],index,dbResult[index]);
 				
-				sprintf(My_msg.data,"nColumn[%d]=%s:data[%d]=%s\n",j,dbResult[j],index,dbResult[index]);
+				sprintf(My_msg.data,"*%s",dbResult[index]);
 				index++;
 				msgsnd(msg_id, &My_msg, sizeof(My_msg) - sizeof(long), 0);
 				bzero(My_msg.data,sizeof(My_msg.data));
-			}
+			
 		}
 		My_msg.My_type = BACKOVERHistoricalRecord;
 		msgsnd(msg_id, &My_msg, sizeof(My_msg) - sizeof(long), 0);

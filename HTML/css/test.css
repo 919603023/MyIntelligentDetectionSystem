@@ -252,3 +252,11 @@ h6 a {
     border-radius: .5em;
     text-align: center
 }
+
+td{
+	width:120px;
+	height:80px;
+	text-align: center;
+	vertical-align:center;
+	padding: 10px;
+}
