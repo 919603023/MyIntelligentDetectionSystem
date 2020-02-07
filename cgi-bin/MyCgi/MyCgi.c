@@ -13,6 +13,7 @@
 #include "sqlite3.h"
 #define register 0
 #define changepassword 1
+#define logon 3
 int MySqlite3(char *sql,char *tmp,char *tmp2,char *tmp3,int type)
 {
     sqlite3 *db = NULL;
@@ -84,6 +85,27 @@ if(result == SQLITE_OK)
 		sqlite3_free_table(dbResult);
 	}
 }
+else if(type == logon)
+{
+	if(result == SQLITE_OK)
+	{
+		int i, j;	
+		if(nRow == 0)
+		{	
+			char buf[100] =""; 
+		    sprintf(buf,"insert into test values ('%s','%s');",tmp,tmp2); 
+			result = sqlite3_get_table(db, buf,&dbResult, &nRow, &nColumn, &errmsg);
+			printf("注册成功\n");
+		}
+		else 
+		{
+				printf("此用户已被注册\n");
+			
+		}
+		
+		sqlite3_free_table(dbResult);
+	}
+}
 	sqlite3_close(db);
  
 }
@@ -115,6 +137,14 @@ int main(int argc, char *argv[])
 		sprintf(sql,"select pwd from test where id=\"%s\";",user);
 		printf("%s\n",sql);
 		MySqlite3(sql,user,oldpasswd,newpasswd,changepassword);
+	}
+	else if(strncmp("Logon:",data,6) == 0)
+	{
+		char user[50] = "",passwd[50] = "";
+		sscanf(data,"%*[^:]:%[^,],%s",user,passwd);
+		char sql[100]="";
+		sprintf(sql,"select pwd from test where id=\"%s\";",user);
+		MySqlite3(sql,user,passwd,NULL,logon);
 	}
 	
 return 0;

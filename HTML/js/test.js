@@ -33,7 +33,7 @@ function refresh() {
     xmlhttp.onreadystatechange = function () {
         if (xmlhttp.status == 200 && xmlhttp.readyState == 4) {
             var ret = xmlhttp.responseText;
-            
+
             if (ret.substr(0, 9) == "DataBack:") {
 
                 var data = ret.substr(ret.indexOf(":") + 1);
@@ -56,19 +56,19 @@ function refresh() {
                 document.getElementById("Temp").innerText = Temp;
                 document.getElementById("Humi").innerText = Humi;
                 if (_1_Led_1 == "open") {
-                    
+
                     document.getElementById("1_LED:1").value = "点击关闭";
 
                 } else {
-                    
+
                     document.getElementById("1_LED:1").value = "点击打开";
                 }
                 if (_1_Led_2 == "open") {
-                    
+
                     document.getElementById("1_LED:2").value = "点击关闭";
 
                 } else {
-                    
+
                     document.getElementById("1_LED:2").value = "点击打开";
                 }
 
@@ -137,7 +137,29 @@ function Register_Button(arg) {
         xmlhttp.open("POST", url, true);
         xmlhttp.send(data);
     }
+    else if (arg == 3) {
+        var xmlhttp = getXMLHttpRequest();
+        var usr = document.getElementById("usr").value;
+        var pwd = document.getElementById("pwd").value;
+        var pwd1 = document.getElementById("pwd1").value;
+        if (pwd != pwd1 || pwd == "" || usr == "" || usr.length > 15 || pwd.length > 15) {
+            alert("密码和Id必须小于15个字符且不能为空，两次密码必须相同");
+            return 0;
+        }
+        var data = "Logon:" + usr + "," + pwd;
+        var url = "/cgi-bin/MyCgi.cgi";
+        //设置回调函数
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.status == 200 && xmlhttp.readyState == 4) {
+                var ret = xmlhttp.responseText;
+                alert(ret);
+            }
+        }
+        xmlhttp.open("POST", url, true);
+        xmlhttp.send(data);
+    }
 }
+
 
 //按键按下时的处理函数
 function AUTO_KeyClick() {
@@ -215,33 +237,30 @@ function Ledcrtl(arg) {
     var xmlhttp = getXMLHttpRequest();
     var url = "/cgi-bin/MyCgi2.cgi";
     var data = "";
-    var tmp = document.getElementById(arg).value ;
+    var tmp = document.getElementById(arg).value;
 
 
-        if (tmp == "点击打开") {
-            data = arg + "open";
-        }
-        else if(tmp == "点击关闭")
-        {
-            data = arg +"close";
-        }
-        
-    
-        
+    if (tmp == "点击打开") {
+        data = arg + "open";
+    }
+    else if (tmp == "点击关闭") {
+        data = arg + "close";
+    }
+
+
+
     //设置回调函数
     xmlhttp.onreadystatechange = function () {
         if (xmlhttp.status == 200 && xmlhttp.readyState == 4) {
             var ret = xmlhttp.responseText;
-            
-            if(ret == "OK")
-            {
-               var tmp =  document.getElementById(arg).value;
-               if (tmp == "点击打开") {
-                document.getElementById(arg).value = "点击关闭";
-            }else
-            {
-                document.getElementById(arg).value = "点击打开";
-            }
+
+            if (ret == "OK") {
+                var tmp = document.getElementById(arg).value;
+                if (tmp == "点击打开") {
+                    document.getElementById(arg).value = "点击关闭";
+                } else {
+                    document.getElementById(arg).value = "点击打开";
+                }
             }
         }
     }
@@ -249,15 +268,17 @@ function Ledcrtl(arg) {
     xmlhttp.open("POST", url, true);
     //send
     xmlhttp.send(data);
-    
+
 
 }
 
 
 function JUMP(arg) {
+    
     document.getElementById("one").innerHTML = "";
     document.getElementById('one').setAttribute('class', 'MyType');
     switch (arg) {
+        
         case 0:
 
             var a = '<input type="button" class="active" value="注销" onclick="cancellation()" />\
@@ -389,6 +410,42 @@ function JUMP(arg) {
             break;
         case 7:
 
+            break;
+        case 100:
+            var a = '<h3>欢迎你</h3>\
+            <form action="#" name="f" method="post">\
+            <div class="input_outer">\
+                <span class="u_user"></span>\
+                <input name="logname" class="text" style="color: #FFFFFF !important" type="text" id="usr" placeholder="请输入账户">\
+            </div>\
+            <div class="input_outer">\
+                <span class="us_uer"></span>\
+                <input name="logpass" class="text" style="color: #FFFFFF !important; position:absolute; z-index:100;" value="" id="pwd" type="password" placeholder="请输入密码">\
+            </div>\
+            <div class="mb2"><a class="act-but submit" onclick="Register_Button(1)" id="Register" style="color: #FFFFFF">登录</a></div>\
+            <input type="button" onclick="JUMP(101)" id="Register1" value="注册" >\
+        </form>';
+            document.getElementById("BOX").innerHTML = a;
+            break;
+        case 101:
+            var a = '<h3>欢迎你</h3>\
+            <form action="#" name="f" method="post">\
+            <div class="input_outer">\
+                <span class="u_user"></span>\
+                <input name="logname" class="text" style="color: #FFFFFF !important" type="text" id="usr" placeholder="请输入账户">\
+            </div>\
+            <div class="input_outer">\
+                <span class="us_uer"></span>\
+                <input name="logpass" class="text" style="color: #FFFFFF !important; position:absolute; z-index:100;" value="" id="pwd" type="password" placeholder="请输入密码">\
+            </div>\
+            <div class="input_outer">\
+                <span class="us_uer"></span>\
+                <input name="logpass1" class="text" style="color: #FFFFFF !important; position:absolute; z-index:100;" value="" id="pwd1" type="password" placeholder="请再次输入密码">\
+            </div>\
+            <div class="mb2"><a class="act-but submit" onclick="Register_Button(3)" id="Register" style="color: #FFFFFF">注册</a></div>\
+            <input type="button" onclick="JUMP(100)" id="Register1" value="返回" >\
+        </form>';
+            document.getElementById("BOX").innerHTML = a;
             break;
     }
 
