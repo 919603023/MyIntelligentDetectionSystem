@@ -284,7 +284,7 @@ function JUMP(arg) {
             var a = '<input type="button" class="active" value="注销" onclick="cancellation()" />\
                         <div class="container">\
                             <p class="title">\
-                                <input type="button" class="data1" value="历史数据" onclick="historical_data()" />\
+                                <input type="button" class="data1" value="历史数据" onclick="HistoricalRecord()" />\
                                 <input type="button" class="data2" id="date_id" value="        时间          " />\
                                 <label id="device_id">1号棚</label>\
                                 <input type="button" class="active" value="手动刷新" id="autorefresh_button" onclick="AutoRefreshTimer()" />\
@@ -466,3 +466,22 @@ function my_fun() {
         'green' : (div.style.color == 'green' ? 'blue' : 'red');
 }
 /**************结束**************************************** */
+function HistoricalRecord()
+{alert("wo dima l ");
+    var xmlhttp = getXMLHttpRequest()
+    var url = "/cgi-bin/MyCgi2.cgi";
+    var data = "GETHistoricalRecord";
+
+    //设置回调函数
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.status == 200 && xmlhttp.readyState == 4) {
+            var ret = xmlhttp.responseText;
+            alert(ret);
+            
+        }
+    }
+    xmlhttp.open("POST", url, true);
+    xmlhttp.send(data);
+
+
+}

@@ -18,7 +18,7 @@
 #include <sys/ipc.h>
 #include <sys/msg.h>
 #include <semaphore.h>
-
+#include "sqlite3.h"
 #include <signal.h>
 #include <string.h>
 #include <stdbool.h>
@@ -28,6 +28,11 @@
 #include <pthread.h>
 #define MQTTTOCGI 10
 #define CGITOMQTT 20
+#define CGITOSQLITE3 30
+#define GETHistoricalRecord 0
+#define SQLITE3TOCGI 40
+#define BACKHistoricalRecord 0
+#define BACKOVERHistoricalRecord 1
 #define FLUSH 0
 #define FLUSHBACK 1
 #define _1_LEDCTRL 2
@@ -51,9 +56,11 @@ int main(int argc, char *argv[])
     pthread_detach(tid);
 	printf("content-type:text/html\n\n");
 	char *len = getenv("CONTENT_LENGTH");
+    int Len = atoi(len)+1;
+   char *data = (char*)malloc(sizeof(char) * Len);
         // 再使用fgets的实际的数据
-        char data[128]="";
-        fgets(data,atoi(len)+1,stdin);
+        
+        fgets(data,Len,stdin);
 
     key_t key = ftok("My_server",2020);
    int msg_id = msgget(key,IPC_CREAT | 0666);
@@ -98,6 +105,27 @@ int main(int argc, char *argv[])
             printf("%s",msg.data);
         }
     }
+    else if(strncmp("GETHistoricalRecord",data,15) == 0)
+    {
+        
+        MSG msg;
+        msg.type = CGITOSQLITE3;
+        msg.My_type = GETHistoricalRecord;
+        strcpy(msg.data,data);
+		msgsnd(msg_id,&msg,sizeof(msg)-sizeof(long),0);
+        while(msg.My_type != BACKOVERHistoricalRecord)
+        {
+            msgrcv(msg_id,&msg,sizeof(msg)-sizeof(long),SQLITE3TOCGI,0);
+		    if(msg.My_type == BACKHistoricalRecord)
+            {
+                printf("%s",msg.data);
+            }
+            
+        }
+        
+    }
 	
 return 0;
 }
+
+
